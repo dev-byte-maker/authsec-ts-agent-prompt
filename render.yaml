@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: authsec-ts-agent-prompt
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # AuthSec endpoints
+      - key: AUTHSEC_ISSUER
+        value: https://stage.api.authsec.dev
+      - key: AUTHSEC_AUTHORIZATION_SERVER
+        value: https://stage.api.authsec.dev
+      - key: AUTHSEC_JWKS_URL
+        value: https://stage.api.authsec.dev/oauth/jwks
+      - key: AUTHSEC_INTROSPECTION_URL
+        value: https://stage.api.authsec.dev/oauth/introspect
+
+      # Resource server identity — set these as Render secret env vars
+      - key: AUTHSEC_RESOURCE_SERVER_ID
+        sync: false
+      - key: AUTHSEC_RESOURCE_URI
+        value: https://authsec-ts-agent-prompt.onrender.com/mcp
+      - key: AUTHSEC_RESOURCE_NAME
+        value: mcp-render-ts-agent-setup
+
+      # Introspection credentials — set as Render secret env vars
+      - key: AUTHSEC_INTROSPECTION_CLIENT_ID
+        sync: false
+      - key: AUTHSEC_INTROSPECTION_CLIENT_SECRET
+        sync: false
+
+      # Canonical scopes
+      - key: AUTHSEC_SUPPORTED_SCOPES
+        value: "mcp_render_ts_agent_setup:read mcp_render_ts_agent_setup:tools:read mcp_render_ts_agent_setup:tools:write mcp_render_ts_agent_setup:write"
+
+      # SDK behaviour
+      - key: AUTHSEC_POLICY_MODE
+        value: remote_required
+      - key: AUTHSEC_VALIDATION_MODE
+        value: jwt_and_introspect
+      - key: AUTHSEC_PUBLISH_MANIFEST
+        value: "true"
